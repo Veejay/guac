@@ -5,9 +5,10 @@ import (
 	"html/template"
 	"net/http"
 
-	"golang.org/x/net/context"
+	"google.golang.org/appengine"
 	"google.golang.org/appengine/blobstore"
 	"google.golang.org/appengine/image"
+	"google.golang.org/appengine/log"
 )
 
 type ip struct {
@@ -15,7 +16,7 @@ type ip struct {
 }
 
 func imageHandler(response http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := appengine.NewContext(r)
 	blobKey, err := blobstore.BlobKeyForFile(ctx, "/gs/images-a-gogo.appspot.com/lukaku.jpg")
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
@@ -30,6 +31,11 @@ func imageHandler(response http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(response, "Serving URL: %s", imageURL)
 }
 
+func logger(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	log.Infof(ctx, "Requested URL: %v", r.URL)
+}
+
 func rootHandler(response http.ResponseWriter, request *http.Request) {
 	t, _ := template.ParseFiles("index.html")
 	t.Execute(response, ip{Address: request.RemoteAddr})
@@ -37,6 +43,5 @@ func rootHandler(response http.ResponseWriter, request *http.Request) {
 
 func main() {
 	http.HandleFunc("/images/", imageHandler)
-	http.HandleFunc("/", rootHandler)
-	http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/", logger)
 }
