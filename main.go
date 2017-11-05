@@ -5,7 +5,9 @@ import (
 	"html/template"
 	"net/http"
 
-	"cloud.google.com/go/storage"
+	"google.golang.org/appengine/blobstore"
+	"google.golang.org/appengine/image"
+
 	"golang.org/x/net/context"
 )
 
@@ -15,11 +17,9 @@ type ip struct {
 
 func imageHandler(response http.ResponseWriter, request *http.Request) {
 	ctx := context.Background()
-	client, _ := storage.NewClient(ctx)
-	bucketName := "images-a-gogo.appspot.com"
-	bucket := client.Bucket(bucketName)
-	attrs, _ := bucket.Attrs(ctx)
-	fmt.Fprintf(response, "<h4>%s</h4>", attrs.Name)
+	blobKey, _ := blobstore.BlobKeyForFile(ctx, "/gs/images-a-gogo.appspot.com/lukaku.jpg")
+	url, _ := image.ServingURL(ctx, blobKey, &image.ServingURLOptions{Secure: true, Size: 800, Crop: false})
+	fmt.Fprintf(response, "Serving URL: %s", url)
 }
 
 func rootHandler(response http.ResponseWriter, request *http.Request) {
