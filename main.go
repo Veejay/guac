@@ -11,6 +11,6 @@ func handler(response http.ResponseWriter, request *http.Request) {
 }
 
 func init() {
-	http.HandleFunc("/images", handler)
+	http.HandleFunc("/images/", handler)
 	http.ListenAndServe(":8080", nil)
 }
