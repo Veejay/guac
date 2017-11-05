@@ -7,7 +7,7 @@ import (
 )
 
 type ip struct {
-	address string
+	Address string
 }
 
 func imageHandler(response http.ResponseWriter, request *http.Request) {
@@ -17,7 +17,7 @@ func imageHandler(response http.ResponseWriter, request *http.Request) {
 
 func rootHandler(response http.ResponseWriter, request *http.Request) {
 	t, _ := template.ParseFiles("index.html")
-	t.Execute(response, ip{address: request.Header.Get("X-Forwarded-For")})
+	t.Execute(response, ip{Address: request.RemoteAddr})
 }
 
 func init() {
