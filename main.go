@@ -1,4 +1,4 @@
-package main
+package images
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ func handler(response http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(response, "%s", fileName)
 }
 
-func main() {
+func init() {
 	http.HandleFunc("/images", handler)
 	http.ListenAndServe(":8080", nil)
 }
