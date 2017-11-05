@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	"cloud.google.com/go/storage"
+	"golang.org/x/net/context"
 )
 
 type ip struct {
@@ -12,7 +15,11 @@ type ip struct {
 
 func imageHandler(response http.ResponseWriter, request *http.Request) {
 	fileName := request.URL.Path[len("/images/"):]
-	fmt.Fprintf(response, "%s", fileName)
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+	bucketName := "images-a-gogo.appspot.com"
+	bucket := client.Bucket(bucketName)
+	fmt.Fprintf(response, "<h4>%s</h4>", bucket.Attrs(ctx).Name)
 }
 
 func rootHandler(response http.ResponseWriter, request *http.Request) {
