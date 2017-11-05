@@ -44,4 +44,5 @@ func rootHandler(response http.ResponseWriter, request *http.Request) {
 func main() {
 	http.HandleFunc("/images/", imageHandler)
 	http.HandleFunc("/", logger)
+	http.ListenAndServe(":8080", nil)
 }
