@@ -1,4 +1,4 @@
-package main
+package images
 
 import (
 	"fmt"
@@ -35,8 +35,7 @@ func rootHandler(response http.ResponseWriter, request *http.Request) {
 	t.Execute(response, ip{Address: request.RemoteAddr})
 }
 
-func main() {
+func init() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/images/", imageHandler)
-	appengine.Main()
 }
