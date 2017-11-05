@@ -5,30 +5,29 @@ import (
 	"html/template"
 	"net/http"
 
+	"google.golang.org/appengine"
 	"google.golang.org/appengine/blobstore"
 	"google.golang.org/appengine/image"
-	"google.golang.org/appengine/log"
 )
 
 type ip struct {
 	Address string
 }
 
-func imageHandler(response http.ResponseWriter, request *http.Request) {
-	ctx := request.Context()
+func imageHandler(response http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
 	blobKey, err := blobstore.BlobKeyForFile(ctx, "/gs/images-a-gogo.appspot.com/lukaku.jpg")
 	if err != nil {
-		log.Errorf(ctx, "could not put into datastore: %v", err)
-		http.Error(response, "An error occurred. Try again.", http.StatusInternalServerError)
+		http.Error(response, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	imageURL, err := image.ServingURL(ctx, blobKey, &image.ServingURLOptions{Secure: true, Size: 800, Crop: false})
+	// Not passing any particular options, set ServingURLOptions to nil
+	imageURL, err := image.ServingURL(ctx, blobKey, nil)
 	if err != nil {
-		log.Errorf(ctx, "could not put into datastore: %v", err)
 		http.Error(response, "An error occurred. Try again.", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(response, "Serving URL: %s / Blob key is %s", imageURL, blobKey)
+	fmt.Fprintf(response, "Serving URL: %s", imageURL)
 }
 
 func rootHandler(response http.ResponseWriter, request *http.Request) {
