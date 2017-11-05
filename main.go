@@ -5,11 +5,10 @@ import (
 	"html/template"
 	"net/http"
 
+	"google.golang.org/appengine"
 	"google.golang.org/appengine/blobstore"
 	"google.golang.org/appengine/image"
 	"google.golang.org/appengine/log"
-
-	"golang.org/x/net/context"
 )
 
 type ip struct {
@@ -17,7 +16,7 @@ type ip struct {
 }
 
 func imageHandler(response http.ResponseWriter, request *http.Request) {
-	ctx := context.Background()
+	ctx := appengine.NewContext(request)
 	blobKey, err := blobstore.BlobKeyForFile(ctx, "/gs/images-a-gogo.appspot.com/lukaku.jpg")
 	if err != nil {
 		log.Errorf(ctx, "could not put into datastore: %v", err)
