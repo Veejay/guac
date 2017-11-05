@@ -1,4 +1,4 @@
-package images
+package main
 
 import (
 	"fmt"
@@ -14,12 +14,12 @@ type ip struct {
 }
 
 func imageHandler(response http.ResponseWriter, request *http.Request) {
-	fileName := request.URL.Path[len("/images/"):]
 	ctx := context.Background()
-	client, err := storage.NewClient(ctx)
+	client, _ := storage.NewClient(ctx)
 	bucketName := "images-a-gogo.appspot.com"
 	bucket := client.Bucket(bucketName)
-	fmt.Fprintf(response, "<h4>%s</h4>", bucket.Attrs(ctx).Name)
+	attrs, _ := bucket.Attrs(ctx)
+	fmt.Fprintf(response, "<h4>%s</h4>", attrs.Name)
 }
 
 func rootHandler(response http.ResponseWriter, request *http.Request) {
@@ -27,7 +27,7 @@ func rootHandler(response http.ResponseWriter, request *http.Request) {
 	t.Execute(response, ip{Address: request.RemoteAddr})
 }
 
-func init() {
+func main() {
 	http.HandleFunc("/images/", imageHandler)
 	http.HandleFunc("/", rootHandler)
 	http.ListenAndServe(":8080", nil)
