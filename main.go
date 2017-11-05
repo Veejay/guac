@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"google.golang.org/appengine"
+	"golang.org/x/net/context"
 	"google.golang.org/appengine/blobstore"
 	"google.golang.org/appengine/image"
 )
@@ -15,7 +15,7 @@ type ip struct {
 }
 
 func imageHandler(response http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
+	ctx := context.Background()
 	blobKey, err := blobstore.BlobKeyForFile(ctx, "/gs/images-a-gogo.appspot.com/lukaku.jpg")
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
